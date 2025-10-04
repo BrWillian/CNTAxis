@@ -7,7 +7,7 @@
 
 #include <onnxruntime/onnxruntime_cxx_api.h>
 #include <opencv2/opencv.hpp>
-#include "../meta/types.h"
+#include "../meta/Types.h"
 #include <vector>
 #include <chrono>
 #include "ImageOp.h"
