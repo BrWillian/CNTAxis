@@ -1,0 +1,25 @@
+# CLion specific files
+.idea/
+cmake-build-*/
+*.iml
+
+# CMake build artifacts
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Executables and libraries
+*.so
+*.a
+
+# Object files
+*.o
+*.obj
+
+# Other common ignored files
+*.log
+*.swp
+*~
