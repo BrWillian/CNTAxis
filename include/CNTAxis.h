@@ -2,7 +2,7 @@
 #define UNTITLED_LIBRARY_H
 
 #include <onnxruntime/onnxruntime_cxx_api.h>
-#include <opencv4/opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 #include "../meta/types.h"
 #include <vector>
 
