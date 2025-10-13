@@ -13,4 +13,16 @@ struct Detection {
     cv::Rect bbox;
 };
 
+struct Axis {
+    cv::Rect bbox;
+    float confidence;
+};
+
+struct Vehicle {
+    cv::Rect bbox;
+    float confidence;
+    int numAxis;
+    std::vector<Axis> axis;
+};
+
 #endif //UNTITLED_TYPES_H
