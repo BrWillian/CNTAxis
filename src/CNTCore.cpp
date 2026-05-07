@@ -3,6 +3,7 @@
 //
 
 #include "../include/CNTCore.h"
+#include "../generated/Weights.h"
 
 float CNTCore::calculateIou(const cv::Rect& a, const cv::Rect& b) {
     int xA = std::max(a.x, b.x);
@@ -27,7 +28,7 @@ std::vector<Detection> CNTCore::performInference(const cv::Mat &image) const {
 }
 
 CNTCore::CNTCore() {
-    cnt_axis_ = new CNTAxis("./models/axis.onnx");
+    cnt_axis_ = new CNTAxis(cntaxis_onnx, cntaxis_onnx_len);
 }
 
 CNTCore::CNTCore(const std::string& model_path) {
