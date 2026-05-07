@@ -13,6 +13,63 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUT_DIRECTORY})
 
 file(MAKE_DIRECTORY ${OUT_DIRECTORY})
 
+execute_process(
+        COMMAND git rev-parse --abbrev-ref HEAD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_BRANCH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+        COMMAND git log -1 --format=%h
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+        COMMAND git describe --tags --abbrev=0
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE CNTAXIS_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+add_definitions(-DGIT_COMMIT_HASH="${GIT_COMMIT_HASH}")
+add_definitions(-DGIT_BRANCH="${GIT_BRANCH}")
+add_definitions(-DCNTAXIS_VERSION="${CNTAXIS_VERSION}")
+
+message(STATUS "Generating version.h")
+
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/meta/Version.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/generated/Version.h
+)
+
+message(STATUS "Generating weights.h")
+
+execute_process(
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta/
+        COMMAND tar xf weights.tar.gz
+)
+
+execute_process(
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta/
+        COMMAND xxd -i cntaxis.onnx
+        OUTPUT_VARIABLE CNTAXIS_WEIGHTS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/meta/Weights.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/generated/Weights.h
+)
+
+execute_process(
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/meta/
+        COMMAND rm cntaxis.onnx
+)
+
+
 set(ONNX_RUNTIME_LIB_STATIC /usr/local/lib/libonnxruntime.a)
 
 if(NOT EXISTS ${ONNX_RUNTIME_LIB_STATIC})
@@ -30,7 +87,8 @@ message(INFO ${LIB_DEPENDENCIES})
 add_library(CNTAxis SHARED src/CNTAxis.cpp
         src/ONNXModel.cpp
         src/ImageOp.cpp
-        src/CNTCore.cpp)
+        src/CNTCore.cpp
+        src/C_Wrapper.cpp)
 
 target_link_options(CNTAxis PRIVATE -static-libstdc++ -static-libgcc)
 target_compile_options(CNTAxis PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
